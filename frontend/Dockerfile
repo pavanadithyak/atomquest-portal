@@ -12,4 +12,4 @@ RUN npm install -g serve
 WORKDIR /app
 COPY --from=build /app/build .
 EXPOSE 3000
-CMD ["sh", "-c", "sed -i 's|<head>|<head><script>window.__API_URL__=\"'$REACT_APP_API_URL'\";</script>|' index.html && serve -s . -l $PORT"]
+CMD ["sh", "-c", "serve -s . -l $PORT"]
