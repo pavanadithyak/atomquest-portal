@@ -1,10 +1,12 @@
 import axios from "axios";
 
-const baseURL = window.__API_URL__
-  ? window.__API_URL__.replace(/\/+$/, "") + "/api"
-  : process.env.REACT_APP_API_URL
-    ? process.env.REACT_APP_API_URL.replace(/\/+$/, "") + "/api"
-    : "/api";
+function resolveApiUrl() {
+  const raw = (window.__API_URL__ || process.env.REACT_APP_API_URL || "").replace(/\/+$/, "");
+  if (!raw) return "/api";
+  return (raw.startsWith("http") ? raw : "https://" + raw) + "/api";
+}
+
+const baseURL = resolveApiUrl();
 
 const api = axios.create({ baseURL });
 
