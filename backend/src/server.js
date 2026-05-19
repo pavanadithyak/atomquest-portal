@@ -1,6 +1,8 @@
 require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
+const fs = require("fs");
+const path = require("path");
 const { Sequelize } = require("sequelize");
 
 const app = express();
@@ -67,6 +69,27 @@ app.use("/api/admin", adminRoutes);
 
 const PORT = process.env.PORT || 5000;
 
-app.listen(PORT, () => {
-  console.log(`Backend running on http://localhost:${PORT}`);
-});
+async function runMigrations() {
+  try {
+    await sequelize.authenticate();
+    console.log("Database connected");
+
+    const schemaSQL = fs.readFileSync(
+      path.join(__dirname, "../migrations/001_create_schema.sql"),
+      "utf8"
+    );
+    await sequelize.query(schemaSQL, { raw: true });
+    console.log("Schema up to date");
+  } catch (error) {
+    console.error("Migration error:", error.message);
+  }
+}
+
+async function start() {
+  await runMigrations();
+  app.listen(PORT, "0.0.0.0", () => {
+    console.log(`Backend running on http://0.0.0.0:${PORT}`);
+  });
+}
+
+start();
