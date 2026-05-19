@@ -9,17 +9,19 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-const sequelize = new Sequelize(
-  process.env.POSTGRES_DB || "atomquest",
-  process.env.POSTGRES_USER || "postgres",
-  process.env.POSTGRES_PASSWORD || "change_me",
-  {
-    host: process.env.POSTGRES_HOST || "postgres",
-    port: process.env.POSTGRES_PORT || 5432,
-    dialect: "postgres",
-    logging: false,
-  }
-);
+const sequelize = process.env.DATABASE_URL
+  ? new Sequelize(process.env.DATABASE_URL, { dialect: "postgres", logging: false })
+  : new Sequelize(
+      process.env.POSTGRES_DB || "atomquest",
+      process.env.POSTGRES_USER || "postgres",
+      process.env.POSTGRES_PASSWORD || "change_me",
+      {
+        host: process.env.POSTGRES_HOST || "postgres",
+        port: process.env.POSTGRES_PORT || 5432,
+        dialect: "postgres",
+        logging: false,
+      }
+    );
 
 // Initialize models
 const User = require("./models/User")(sequelize);

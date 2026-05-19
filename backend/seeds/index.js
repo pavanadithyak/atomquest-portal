@@ -3,17 +3,19 @@ const { Sequelize } = require("sequelize");
 const fs = require("fs");
 const path = require("path");
 
-const sequelize = new Sequelize(
-  process.env.POSTGRES_DB || "atomquest",
-  process.env.POSTGRES_USER || "postgres",
-  process.env.POSTGRES_PASSWORD || "change_me",
-  {
-    host: process.env.POSTGRES_HOST || "postgres",
-    port: parseInt(process.env.POSTGRES_PORT, 10) || 5432,
-    dialect: "postgres",
-    logging: console.log,
-  }
-);
+const sequelize = process.env.DATABASE_URL
+  ? new Sequelize(process.env.DATABASE_URL, { dialect: "postgres", logging: console.log })
+  : new Sequelize(
+      process.env.POSTGRES_DB || "atomquest",
+      process.env.POSTGRES_USER || "postgres",
+      process.env.POSTGRES_PASSWORD || "change_me",
+      {
+        host: process.env.POSTGRES_HOST || "postgres",
+        port: parseInt(process.env.POSTGRES_PORT, 10) || 5432,
+        dialect: "postgres",
+        logging: console.log,
+      }
+    );
 
 async function seed() {
   try {
